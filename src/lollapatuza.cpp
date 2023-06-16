@@ -30,7 +30,13 @@
 void Lollapatuza::registrarCompra(Lollapatuza lolla, IdPuesto id, Persona a, Producto item, Cantidad cantidad) {
     if(_consumosPorPersona.count(a) == 0){
         _consumosPorPersona.insert({a, _consumosPorPersona[a].insert({item,cantidad})});
-    }else{
+    }else{void Lollapatuza::hackear(Lollapatuza lolla, Persona a, Producto item) {
+    Nat cantidadNueva = lolla._consumosPorPersona[a][item] -1;
+    lolla._consumosPorPersona[a][item] = cantidadNueva; //Actualizo consumos
+    int gastoViejo = lolla._gastosPorPersona.indexar(lolla._personasEnGasto[a]).first;
+    (lolla._gastosPorPersona.indexar(lolla._personasEnGasto[a])).first = gastoViejo - lolla._precios[item];
+
+}
         if(_consumosPorPersona[a].count(item) == 0){
             _consumosPorPersona[a].insert({item,cantidad});
         }else{
@@ -62,4 +68,12 @@ void Lollapatuza::registrarCompra(Lollapatuza lolla, IdPuesto id, Persona a, Pro
         }
 
     }
+}
+  
+void Lollapatuza::hackear(Lollapatuza lolla, Persona a, Producto item) {
+    Nat cantidadNueva = lolla._consumosPorPersona[a][item] -1;
+    lolla._consumosPorPersona[a][item] = cantidadNueva; //Actualizo consumos
+    int gastoViejo = lolla._gastosPorPersona.indexar(lolla._personasEnGasto[a]).first;
+    (lolla._gastosPorPersona.indexar(lolla._personasEnGasto[a])).first = gastoViejo - lolla._precios[item];
+
 }
