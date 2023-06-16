@@ -12,10 +12,6 @@
     Puesto unPuesto = it->second;
     _precios = unPuesto.precios;
 
-    Producto item = 0;
-    IdPuesto id = 0;
-
-
     int i = 0;
     while (i < personas.size()) {
         //Defino a todas las personas en puestos hackeables.
