@@ -1,4 +1,4 @@
-
+#include "ColaPrior.h"
 template<class T>
 ColaPrior<T>::ColaPrior(): heap() {}
 
@@ -69,4 +69,9 @@ void ColaPrior<T>::heapifyUp(int indice) {
         }
         indice = padre;
     }
+}
+
+template<class T>
+T ColaPrior<T>::indexar(int i) {
+    return heap[i];
 }
