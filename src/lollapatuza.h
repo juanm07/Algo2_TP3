@@ -18,7 +18,7 @@ public:
 
     Persona personaQueMasGasto(lollapatuza lolla);
 
-    IdPuesto menorStock(lollapatuza lolla, );
+    IdPuesto menorStock(lollapatuza lolla, Producto item);
 
     set<Persona> obtenerPersonas(lollapatuza lolla);
 
@@ -31,7 +31,7 @@ private:
     map<Persona, map<Producto, Cantidad>> _consumosPorPersona;
     map<Persona, map<Producto, map<idPuesto, *aed2_Puesto>>> _puestosHackeables;
     map<Producto, Nat> _precios;
-    priority_queue<Nat, iterator>  _gastosPorPersona
+    priority_queue<Nat, iterator>  _gastosPorPersona;
     map<Persona, Indice> _personasEnGasto;
 };
 
