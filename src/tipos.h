@@ -13,6 +13,8 @@ using Nat = unsigned int;
 using Stock = map<Producto, Nat>;
 using Promociones = map<Producto, map<Nat, Nat>>;
 using Menu = map<Producto, Nat>;
+using Indice = Nat;
+using Cantidad = Nat;
 
 struct aed2_Puesto {
     Stock stock;
