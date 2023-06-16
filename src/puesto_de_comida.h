@@ -19,7 +19,7 @@ public:
 
     int obtenerGasto(puesto_de_comida puesto, Persona a);
 
-    map<Producto , pair< int, int >>;
+    map<Producto , pair< int, int >> obtenerVentas(puesto_de_comida puesto, Persona a);
 
     int obtenerCantVendidaSinDesc(puesto_de_comida puesto, Persona a, Producto item);
 
