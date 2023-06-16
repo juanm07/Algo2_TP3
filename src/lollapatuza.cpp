@@ -1,9 +1,35 @@
 #include "lollapatuza.h"
 
-lollapatuza lollapatuza::crearLolla(const map <IdPuesto, aed2_Puesto> &puestos, const set <Persona> &personas) {
-    lollapatuza lola;
-    lola._personas =
-}
+ lollapatuza lollapatuza::crearLolla(const map <IdPuesto, Puesto> &puestos, const vector<Persona> &personas) {
+    _personas = personas;
+    _puestos = puestos;
+
+    //Se declara como mayor consumidora a una persona, no importa quién sea.
+    _mayorConsumidora = personas[0];
+
+    //Como los precios son los mismos no importa el puesto.
+    auto it = puestos.begin();
+    Puesto unPuesto = it->second;
+    _precios = unPuesto.precios;
+
+    Producto item = 0;
+    IdPuesto id = 0;
+
+
+    int i = 0;
+    while (i < personas.size()) {
+        //Defino a todas las personas en puestos hackeables.
+        _puestosHackeables.insert({personas[i], info});
+
+        //Defino a todas las personas en personasPorGasto junto con el indice.
+        _personasPorGasto.insert({personas[i], i});
+
+
+        // FALTA ARMAR EL MAXHEAP
+
+
+        i++;
+    }
 
 void Lollapatuza::registrarCompra(Lollapatuza lolla, IdPuesto id, Persona a, Producto item, Cantidad cantidad) {
     if(_consumosPorPersona.count(a) == 0){
