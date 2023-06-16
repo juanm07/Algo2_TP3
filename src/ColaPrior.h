@@ -35,6 +35,8 @@ public:
 	// Constructor que hace heapify.
 	ColaPrior(const vector<T>& elems);
 
+    T indexar(int i);
+
 
 
 private:
