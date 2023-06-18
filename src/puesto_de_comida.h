@@ -28,15 +28,13 @@ public:
     void hackeoPuesto(puesto_de_comida puesto, Persona a, Producto item);
 
 private:
+    map<Producto ,int > _precios;
+    map<Producto ,int > _stock;
+    map<Producto , vector<int>> _vectorDescuentos;
+    map<Persona ,int> _gastoPorPersona;
+    map<Persona,map<Producto,pair<int,int>>> _ventas;
 
     
-
-
-
-
-
-
-
 };
 
 
