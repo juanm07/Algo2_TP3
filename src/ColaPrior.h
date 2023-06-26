@@ -46,6 +46,5 @@ private:
 
 };
 
-#include "ColaPrior.hpp"
 
 #endif /*_COLAPRIOR_H_*/
