@@ -4,29 +4,31 @@
 #include<iterator>
 #include <vector>
 #include "tipos.h"
-#include "puesto.cpp"
+
 
 class Puesto {
 public:
-    Puesto CrearPuesto(const Menu& precios,const Stock& stock, const Promociones& descuentos);
+    Puesto(const Menu& precios,const Stock& stock, const Promociones& descuentos);
 
-    static Cantidad obtenerStock(Puesto puesto,Producto item);
+    Cantidad obtenerStock(Producto item);
 
-    static bool estaEnElMenu(Puesto puesto, Producto item);
+    bool estaEnElMenu(Producto item);
 
-    static Descuento obtenerDescuento(Puesto puesto, Producto item, Cantidad cantidad);
+     map<Producto, Dinero> obtenerPrecios();
 
-    static Dinero aplicarDescuento (Dinero dinero, Descuento desc);
+    Descuento obtenerDescuento(Producto item, Cantidad cant);
 
-    Dinero obtenerGasto(Puesto puesto, Persona a);
+    Dinero aplicarDescuento (Dinero dinero, Descuento desc);
 
-    map<Producto , pair< Cantidad, Cantidad >> obtenerVentas(Puesto puesto, Persona a);
+    Dinero obtenerGasto(Persona a);
 
-    Cantidad obtenerCantVendidaSinDesc(Puesto puesto, Persona a, Producto item);
+    map<Producto , pair< Cantidad, Cantidad >> obtenerVentas(Persona a);
 
-    static void registrarVenta(Puesto puesto, Persona a, Producto item, Cantidad cantidad);
+    Cantidad obtenerCantVendidaSinDesc(Persona a, Producto item);
 
-    static void hackeoPuesto(Puesto puesto, Persona a, Producto item);
+    void registrarVenta(Persona a, Producto item, Cantidad cantidad);
+
+    void hackeoPuesto(Persona a, Producto item);
 
 private:
 
@@ -39,4 +41,4 @@ private:
 };
 
 
-#endif //TP3_PUESTO_DE_COMIDA_H
+#endif //TP3_PUESTO_H
