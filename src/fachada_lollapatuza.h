@@ -29,6 +29,7 @@ public:
     set<IdPuesto> idsDePuestos() const;
 
 private:
+    Lollapatuza _lollapatuza;
     /*  TODO: Completar.
 
         En la parte privada deben guardarse una instancia de su  modulo Lollapatuza.
