@@ -2,31 +2,33 @@
 
 
 FachadaLollapatuza::FachadaLollapatuza(const set<Persona> &personas, const map<IdPuesto, aed2_Puesto> &infoPuestos) {
-    // TODO: Completar
+    _lollapatuza.crearLolla(infoPuestos, vector<Persona>(personas.begin(), personas.end()));
 }
 
 void FachadaLollapatuza::registrarCompra(Persona persona, Producto producto, Nat cant, IdPuesto idPuesto) {
-    // TODO: Completar
+    _lollapatuza.registrarCompra(idPuesto, persona, producto, cant);
 }
 
 void FachadaLollapatuza::hackear(Persona persona, Producto producto) {
-    // TODO: Completar
+    _lollapatuza.hackear(persona, producto);
 }
 
 Nat FachadaLollapatuza::gastoTotal(Persona persona) const {
-    // TODO: Completar
+    return _lollapatuza.gastoTotal(persona);
 }
 
 Persona FachadaLollapatuza::mayorGastador() const {
-    // TODO: Completar
+    return _lollapatuza.personaQueMasGasto();
 }
 
 IdPuesto FachadaLollapatuza::menorStock(Producto producto) const {
-   // TODO: Completar
+   return _lollapatuza.menorStock(producto);
 }
 
 const set<Persona> &FachadaLollapatuza::personas() const {
-    // TODO: Completar
+    vector<Persona> vectorPersonas = _lollapatuza.obtenerPersonas();
+    set<Persona> res(vectorPersonas.begin(), vectorPersonas.end());
+    return res;
 }
 
 Nat FachadaLollapatuza::stockEnPuesto(IdPuesto idPuesto, const Producto &producto) const {
