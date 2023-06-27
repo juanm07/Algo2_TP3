@@ -1,41 +1,46 @@
-#ifndef TP3_LOLLAPATUZA_H
-#define TP3_LOLLAPATUZA_H
+#ifndef FACHADA_LOLLAPATUZA_H
+#define FACHADA_LOLLAPATUZA_H
 
-
-#include<iterator>
-#include <vector>
+#include <set>
 #include "tipos.h"
-#include "puesto.cpp"
-#include "ColaPrior.hpp"
+#include "lollapatuza.h"
+#include "puesto.h"
 
-class Lollapatuza {
+
+class FachadaLollapatuza {
 public:
-    Lollapatuza crearLolla(const map<IdPuesto, Puesto>& puestos, const vector<Persona>& personas);
+    FachadaLollapatuza(const set<Persona>& personas, const map<IdPuesto, aed2_Puesto>& infoPuestos);
 
-    void registrarCompra(IdPuesto id, Persona a, Producto item, Cantidad cantidad);
+    void registrarCompra(Persona persona, Producto producto, Nat cant, IdPuesto idPuesto);
+    void hackear(Persona persona, Producto producto);
 
-    void hackear(Persona a, Producto item);
+    Nat gastoTotal(Persona persona) const;
+    Persona mayorGastador() const;
+    IdPuesto menorStock(Producto producto) const;
 
-    Dinero gastoTotal(Persona a);
+    const set<Persona>& personas() const;
 
-    Persona personaQueMasGasto();
+    // Operaciones para obtener información de los puestos
+    Nat stockEnPuesto(IdPuesto idPuesto, const Producto& producto) const;
+    Nat descuentoEnPuesto(IdPuesto idPuesto, const Producto& producto, Nat cantidad) const;
+    Nat gastoEnPuesto(IdPuesto idPuesto, Persona persona) const;
 
-    IdPuesto menorStock(Producto item);
-
-    vector<Persona> obtenerPersonas();
-
-    map<IdPuesto, Puesto> obtenerPuesto();
+    /**
+     * Devuelve el conjunto de los los ids de todos los puestos;
+    */
+    set<IdPuesto> idsDePuestos() const;
 
 private:
-    vector<Persona> _personas;
-    map<IdPuesto, Puesto> _puestos;
-    Persona _mayorConsumidora;
-    map<Persona, map<Producto, Cantidad>> _consumosPorPersona;
-    map<Persona, map<Producto, map<IdPuesto, Puesto*>>> _puestosHackeables;
-    map<Producto, Dinero> _precios;
-    ColaPrior<pair<Dinero, map<Persona,Indice>::iterator>>  _gastosPorPersona;
-    map<Persona, Indice> _personasEnGasto;
+    lollapatuza _lollapatuza;
+    /*  TODO: Completar.
+
+        En la parte privada deben guardarse una instancia de su  modulo Lollapatuza.
+        Por ejemplo:
+
+        Lollapatuza lolla;
+
+    */
+
 };
 
-
-#endif //TP3_LOLLAPATUZA_H
+#endif
