@@ -3,6 +3,8 @@
 
 #include <set>
 #include "tipos.h"
+#include "lollapatuza.h"
+#include "puesto.h"
 
 
 class FachadaLollapatuza {
@@ -29,7 +31,7 @@ public:
     set<IdPuesto> idsDePuestos() const;
 
 private:
-    Lollapatuza _lollapatuza;
+    lollapatuza _lollapatuza;
     /*  TODO: Completar.
 
         En la parte privada deben guardarse una instancia de su  modulo Lollapatuza.
