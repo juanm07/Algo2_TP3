@@ -1,46 +1,42 @@
-#ifndef FACHADA_LOLLAPATUZA_H
-#define FACHADA_LOLLAPATUZA_H
+#ifndef TP3_LOLLAPATUZA_H
+#define TP3_LOLLAPATUZA_H
 
+
+#include<iterator>
 #include <set>
 #include "tipos.h"
-#include "lollapatuza.h"
+#include <queue>
 #include "puesto.h"
+#include <tuple>
 
-
-class FachadaLollapatuza {
+class lollapatuza {
 public:
-    FachadaLollapatuza(const set<Persona>& personas, const map<IdPuesto, aed2_Puesto>& infoPuestos);
+    lollapatuza crearLolla(const map<IdPuesto, aed2_Puesto>& puestos, const set<Persona>& personas);
 
-    void registrarCompra(Persona persona, Producto producto, Nat cant, IdPuesto idPuesto);
-    void hackear(Persona persona, Producto producto);
+    void registrarCompra(lollapatuza lolla, IdPuesto id, Persona a, Producto item, Cantidad cantidad);
 
-    Nat gastoTotal(Persona persona) const;
-    Persona mayorGastador() const;
-    IdPuesto menorStock(Producto producto) const;
+    void hackear(lollapatuza lolla, Persona a, Producto item);
 
-    const set<Persona>& personas() const;
+    Nat gastoTotal(lollapatuza lolla, Persona a);
 
-    // Operaciones para obtener información de los puestos
-    Nat stockEnPuesto(IdPuesto idPuesto, const Producto& producto) const;
-    Nat descuentoEnPuesto(IdPuesto idPuesto, const Producto& producto, Nat cantidad) const;
-    Nat gastoEnPuesto(IdPuesto idPuesto, Persona persona) const;
+    Persona personaQueMasGasto(lollapatuza lolla);
 
-    /**
-     * Devuelve el conjunto de los los ids de todos los puestos;
-    */
-    set<IdPuesto> idsDePuestos() const;
+    IdPuesto menorStock(lollapatuza lolla, Producto item);
+
+    set<Persona> obtenerPersonas(lollapatuza lolla);
+
+    map<IdPuesto, aed2_Puesto> obtenerPuesto(lollapatuza lolla);
 
 private:
-    lollapatuza _lollapatuza;
-    /*  TODO: Completar.
-
-        En la parte privada deben guardarse una instancia de su  modulo Lollapatuza.
-        Por ejemplo:
-
-        Lollapatuza lolla;
-
-    */
-
+    set<Persona> _personas;
+    map<IdPuesto, aed2_Puesto> _puestos;
+    Persona _mayorConsumidora;
+    map<Persona, map<Producto, Cantidad>> _consumosPorPersona;
+    map<Persona, map<Producto, map<IdPuesto, Puesto*>>> _puestosHackeables;
+    map<Producto, Nat> _precios;
+    queue<tuple<Nat,iterator>>  _gastosPorPersona;
+    map<Persona, Indice> _personasEnGasto;
 };
 
-#endif
+
+#endif //TP3_LOLLAPATUZA_H
