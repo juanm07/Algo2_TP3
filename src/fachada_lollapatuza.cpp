@@ -1,20 +1,25 @@
 #include "fachada_lollapatuza.h"
 
 
+
 FachadaLollapatuza::FachadaLollapatuza(const set<Persona> &personas, const map<IdPuesto, aed2_Puesto> &infoPuestos) {
     //info puestos tiene stock promociones menu
+    map<IdPuesto, Puesto> puestos = map<IdPuesto, Puesto>();
     auto it = infoPuestos.begin();
     while(it!= infoPuestos.end()){
         IdPuesto puestoId = it -> first;
         Stock stock = it->second.stock;
         Menu precios = it->second.menu;
-        Promociones descuento = it->second.promociones;
-        _puestos.insert(make_pair(it->first,Puesto(precios,stock,descuento)));
+        Promociones descuentos = it->second.promociones;
+        puestos.insert(make_pair(puestoId,Puesto(precios,stock,descuentos)));
         it++;
-        
     }
-    
-    _lollapatuza.crearLolla(_puestos, vector<Persona>(personas.begin(), personas.end()));
+    vector<Persona> personasVec;
+    for(Persona p: personas){
+        personasVec.push_back(p);
+    }
+
+    _lollapatuza = Lollapatuza(puestos, personasVec);
 }
 
 void FachadaLollapatuza::registrarCompra(Persona persona, Producto producto, Nat cant, IdPuesto idPuesto) {
@@ -39,22 +44,32 @@ IdPuesto FachadaLollapatuza::menorStock(Producto producto) const {
 
 const set<Persona> &FachadaLollapatuza::personas() const {
     vector<Persona> vectorPersonas = _lollapatuza.obtenerPersonas();
-    set<Persona> res(vectorPersonas.begin(), vectorPersonas.end());
+    set<Persona> res = set<Persona>(vectorPersonas.begin(), vectorPersonas.end());
     return res;
 }
 
 Nat FachadaLollapatuza::stockEnPuesto(IdPuesto idPuesto, const Producto &producto) const {
-    // TODO: Completar
+    map<IdPuesto,Puesto> puestos = _lollapatuza.obtenerPuestos();
+    return puestos.at(idPuesto).obtenerStock(producto);
 }
 
 Nat FachadaLollapatuza::descuentoEnPuesto(IdPuesto idPuesto, const Producto &producto, Nat cantidad) const {
-    // TODO: Completar
+    map<IdPuesto,Puesto> puestos = _lollapatuza.obtenerPuestos();
+    return puestos.at(idPuesto).obtenerDescuento(producto, cantidad);
 }
 
 Nat FachadaLollapatuza::gastoEnPuesto(IdPuesto idPuesto, Persona persona) const {
-    // TODO: Completar
+    map<IdPuesto,Puesto> puestos = _lollapatuza.obtenerPuestos();
+    return puestos.at(idPuesto).obtenerGasto(persona);
 }
 
 set<IdPuesto> FachadaLollapatuza::idsDePuestos() const {
-    // TODO: Completar
+    map<IdPuesto,Puesto> puestos = _lollapatuza.obtenerPuestos();
+    set<IdPuesto> res;
+    auto it = puestos.begin();
+    while(it != puestos.end()){
+        res.insert(it->first);
+        it++;
+    }
+    return res;
 }
