@@ -3,6 +3,7 @@
 
 #include <set>
 #include "tipos.h"
+#include "lollapatuza.h"
 
 
 class FachadaLollapatuza {
@@ -30,15 +31,7 @@ public:
 
 private:
     Lollapatuza _lollapatuza;
-    /*  TODO: Completar.
-
-        En la parte privada deben guardarse una instancia de su  modulo Lollapatuza.
-        Por ejemplo:
-
-        Lollapatuza lolla;
-
-    */
-
 };
 
 #endif
+
