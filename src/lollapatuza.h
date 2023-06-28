@@ -5,26 +5,28 @@
 #include<iterator>
 #include <vector>
 #include "tipos.h"
-#include "puesto.cpp"
+#include "puesto.h"
 #include "ColaPrior.hpp"
 
 class Lollapatuza {
 public:
-    Lollapatuza crearLolla(const map<IdPuesto, Puesto>& puestos, const vector<Persona>& personas);
+    Lollapatuza();
+
+    Lollapatuza(const map<IdPuesto, Puesto>& puestos, const vector<Persona>& personas);
 
     void registrarCompra(IdPuesto id, Persona a, Producto item, Cantidad cantidad);
 
     void hackear(Persona a, Producto item);
 
-    Dinero gastoTotal(Persona a);
+    Dinero gastoTotal(Persona a) const;
 
-    Persona personaQueMasGasto();
+    Persona personaQueMasGasto() const;
 
-    IdPuesto menorStock(Producto item);
+    IdPuesto menorStock(Producto item) const;
 
-    vector<Persona> obtenerPersonas();
+    vector<Persona> obtenerPersonas() const;
 
-    map<IdPuesto, Puesto> obtenerPuesto();
+    map<IdPuesto, Puesto> obtenerPuestos() const;
 
 private:
     vector<Persona> _personas;
@@ -39,3 +41,4 @@ private:
 
 
 #endif //TP3_LOLLAPATUZA_H
+
