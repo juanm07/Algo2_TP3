@@ -63,6 +63,8 @@ void ColaPrior::heapifyDown(int indice) {
     }
 
     if (masGrande != indice) {
+	heap[indice].second->second = masGrande; //Actualizo los indices en el diccionario
+        heap[masGrande].second->second = indice; //Actualizo los indices en el diccionario
         std::swap(heap[indice], heap[masGrande]);
         heapifyDown(masGrande);
     }
