@@ -1,9 +1,20 @@
 #include "lollapatuza.h"
+#include "ColaPrior.h"
 #include "puesto.h"
-#include "puesto.cpp"
+Lollapatuza ::Lollapatuza() {
 
-lollapatuza lollapatuza::crearLolla(const map <IdPuesto, Puesto> &puestos, const vector<Persona> &personas) {
-    _personas = personas; //porque no toma los iguales
+    vector<Persona> _personas;
+    map<IdPuesto, Puesto> _puestos;
+    Persona _mayorConsumidora;
+    map<Persona, map<Producto, Cantidad>> _consumosPorPersona;
+    map<Persona, map<Producto, map<IdPuesto, Puesto*>>> _puestosHackeables;
+    map<Producto, Dinero> _precios;
+    ColaPrior<pair<Dinero, map<Persona,Indice>::iterator>>  _gastosPorPersona;
+    map<Persona, Indice> _personasEnGasto;
+
+}
+Lollapatuza :: Lollapatuza(const map <IdPuesto, Puesto> &puestos, const vector<Persona> &personas) {
+    _personas = personas;
     _puestos = puestos;
 
     //Se declara como mayor consumidora a una persona, no importa quién sea.
@@ -12,88 +23,93 @@ lollapatuza lollapatuza::crearLolla(const map <IdPuesto, Puesto> &puestos, const
     //Como los precios son los mismos no importa el puesto.
     auto it = puestos.begin();
     Puesto unPuesto = it->second;
-    _precios = unPuesto.obtenerPrecios(); //uso la funcion de puesto.cpp
+    _precios = unPuesto.obtenerPrecios(); // Antes estabamos accediendo a la variable interna 'precios' del módulo Puesto, lo que rompia el encapsulamiento
 
     int i = 0;
     while (i < personas.size()) {
         //Defino a todas las personas en puestos hackeables.
-        _puestosHackeables.insert({personas[i], info}); //que es info
+        _puestosHackeables.insert(make_pair(personas[i], map<Producto, map<IdPuesto, Puesto*>>()));
 
-        //Defino a todas las personas en personasPorGasto junto con el indice.
-        _personasEnGasto.insert({personas[i], i}); //es personas en gasto???
+        //Defino a todas las personas en personasEnGasto junto con el indice.
+        auto itPersona = _personasEnGasto.insert(make_pair(personas[i], i)).first;
 
-
-        // FALTA ARMAR EL MAXHEAP
-
+        _gastosPorPersona.encolar(make_pair(0, itPersona)); // Armo el MaxHeap
 
         i++;
     }
 }
 
-void lollapatuza::registrarCompra(IdPuesto id, Persona a, Producto item, Cantidad cantidad) {
-
-    if(_consumosPorPersona.count(a) == 0){
-        _consumosPorPersona.insert({a, _consumosPorPersona[a].insert({item,cantidad})}); //como insertamos en un map
-    }else{void lollapatuza::hackear(lollapatuza lolla, Persona a, Producto item) {
-        Nat cantidadNueva = lolla._consumosPorPersona[a][item] -1;
-        lolla._consumosPorPersona[a][item] = cantidadNueva; //Actualizo consumos
-        int gastoViejo = _gastosPorPersona.indexar(lolla._personasEnGasto[a]).first;
-        (lolla._gastosPorPersona.indexar(lolla._personasEnGasto[a])).first = gastoViejo - lolla._precios[item];
-
-    }
-    if(_consumosPorPersona[a].count(item) == 0){
-        _consumosPorPersona[a].insert({item,cantidad});
+void Lollapatuza::registrarCompra(IdPuesto id, Persona a, Producto item, Cantidad cantidad) {
+    if(_consumosPorPersona.count(a) == 0){ //actualizo consumos
+       _consumosPorPersona[a];
+       _consumosPorPersona[a].insert(make_pair(item,cantidad));
     }else{
-        Cantidad cantAnterior = _consumosPorPersona[a][item];
-        _consumosPorPersona[a][item].insert(cantAnterior + cantidad);
-    }
+        if(_consumosPorPersona[a].count(item) == 0){
+            _consumosPorPersona[a].insert({item,cantidad});
+        }else{
+            Cantidad cantAnterior = _consumosPorPersona[a][item];
+            _consumosPorPersona[a][item] = cantAnterior + cantidad;
+        }
     }
 
-    Puesto* puestoDeVenta;
-    puestoDeVenta = &_puestos[id];
-    //registrarVenta(*puestoDeVenta, a, item, cantidad);
-    //registrar compra o registar venta???
-    *puestoDeVenta.registrarVenta(a,item,cantidad);
+    Puesto *puestoDeVenta;
+    puestoDeVenta = &_puestos.at(id); // creamos un puntero al puesto
+    puestoDeVenta->registrarVenta(a, item, cantidad);
 
     Dinero gasto = _precios[item] * cantidad;
-     _gastosPorPersona[_personasEnGasto[a]].first += aplicarDescuento(gasto,*puestoDeVenta->obtenerDescuento(item, cantidad));
 
-     heapify(_gastosPorPersona, _personasEnGasto[a]);
+    //_gastosPorPersona[_personasEnGasto[a]].first += aplicarDescuento(gasto, *puestoDeVenta.obtenerDescuento(item, cantidad));
+    _gastosPorPersona.indexar(_personasEnGasto[a]).first += puestoDeVenta -> aplicarDescuento(gasto, puestoDeVenta->obtenerDescuento(item, cantidad));
+    _gastosPorPersona.heapifyDown(_personasEnGasto[a]);
 
-     _mayorConsumidora = *(proximo(_gastosPorPersona).second);
+    auto itMayorConsumidor = _gastosPorPersona.proximo().second;
+    _mayorConsumidora = itMayorConsumidor->first; // Actualizo mayor consumidor
 
-     if(*puestoDeVenta->obtenerDescuento(item, cantidad)){ // obtener descuento no toma un puesto de venta)
-         if(_puestosHackeables[a].count(item) == 1){
-             if(_puestosHackeables[a][item].count(id) == 0) {
-                 _puestosHackeables[a][item].insert({id, puestoDeVenta});
-             }
-         }else{
-             _puestosHackeables[a].insert({id, map<id, puestoDeVenta>});
+    if(puestoDeVenta->obtenerDescuento(item, cantidad) == 0){ // Veo si hay que agregar el puesto a PuestosHackeables
+        if(_puestosHackeables[a].count(item) == 1){
+            if(_puestosHackeables[a][item].count(id) == 0){
+                _puestosHackeables[a][item].insert({id, puestoDeVenta});
+            }
+        }else{
+            map<IdPuesto,Puesto*> infoPuesto = map<IdPuesto ,Puesto*>();
+            infoPuesto.insert(make_pair(id,puestoDeVenta));
+            _puestosHackeables[a].insert(make_pair(item, infoPuesto));
 
-         }
-
-     }
+        }
+    }
 }
 
-void lollapatuza::hackear(Persona a, Producto item) {
+void Lollapatuza::hackear(Persona a, Producto item) {
     Nat cantidadNueva = _consumosPorPersona[a][item] -1;
     _consumosPorPersona[a][item] = cantidadNueva; //Actualizo consumos
-    Dinero gastoViejo = _gastosPorPersona.indexar(_personasEnGasto[a]).first;
+
+    int gastoViejo = _gastosPorPersona.indexar(_personasEnGasto[a]).first;
     (_gastosPorPersona.indexar(_personasEnGasto[a])).first = gastoViejo - _precios[item];
+    _gastosPorPersona.heapifyUp(_personasEnGasto[a]);
+    _mayorConsumidora = (_gastosPorPersona.proximo().second)->first;
+
+    auto it = _puestosHackeables[a][item].begin();
+    Puesto* puesto = it->second;
+    puesto->hackeoPuesto(a,item);
+
+    if(puesto->obtenerCantVendidaSinDesc(a,item) == 0){
+        _puestosHackeables[a][item].erase(it->first);
+    }
+
 
 }
 
-Nat lollapatuza::gastoTotal(Persona a){
-    int indicePersona = _personasEnGasto[a];
-    return (lolla._gastosPorPersona[indicePersona]).first;
+Dinero Lollapatuza::gastoTotal(Persona a) const{
+    Indice i = _personasEnGasto.at(a);
+    return _gastosPorPersona.indexar(i).first;
 }
 
-Persona lollapatuza::personaQueMasGasto(lollapatuza lolla) {
-    return lolla._mayorConsumidora;
+Persona Lollapatuza::personaQueMasGasto()const{
+    return _mayorConsumidora;
 }
 
-IdPuesto lollapatuza::menorStock(Producto item){ //dudoso
-    IdPuesto res = nullptr;
+IdPuesto Lollapatuza::menorStock(Producto item) const{ //dudoso
+    IdPuesto res;
     auto itPuesto = _puestos.begin();
     while(itPuesto != _puestos.end()){
         if((itPuesto->second).estaEnElMenu(item)){
@@ -105,10 +121,10 @@ IdPuesto lollapatuza::menorStock(Producto item){ //dudoso
 
     while(itPuesto != _puestos.end()){
         if((itPuesto->second).estaEnElMenu(item)){
-            if((itPuesto->second).obtenerStock(item) < res.obtenerStock(item)){
+            if((itPuesto->second).obtenerStock(item) < _puestos.at(res).obtenerStock(item)){
                 res = itPuesto->first;
             }else {
-                if (((itPuesto->second).obtenerStock(item) == res.obtenerStock(item)) && (res > itPuesto->first)) { //copie el algoritmo pero no creo que este bien. A obtenerStock(res, item) le estamos pasando un puestoId en vez de un puesto
+                if (((itPuesto->second).obtenerStock(item) == _puestos.at(res).obtenerStock(item)) && (res > itPuesto->first)) { //copie el algoritmo pero no creo que este bien. A obtenerStock(res, item) le estamos pasando un puestoId en vez de un puesto
                     res = itPuesto->first;
                 }
             }
@@ -118,14 +134,10 @@ IdPuesto lollapatuza::menorStock(Producto item){ //dudoso
     return res;
 }
 
-
-
-}
-
-set<Persona> lollapatuza::obtenerPersonas(lollapatuza lolla) {
+vector<Persona> Lollapatuza::obtenerPersonas() const{
     return _personas;
 }
 
-map<IdPuesto ,aed2_Puesto> lollapatuza::obtenerPuesto(lollapatuza lolla) {
+map<IdPuesto, Puesto> Lollapatuza::obtenerPuesto() const{
     return _puestos;
 }
