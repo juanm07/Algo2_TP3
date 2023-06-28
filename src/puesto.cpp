@@ -1,5 +1,11 @@
 #include "puesto.h"
 
+Puesto::Puesto(): _stock(map<Producto, Nat>()),
+ _vectorDescuentos(map<Producto, vector<Descuento>>()),
+ _gastoPorPersona(map<Persona, Dinero>()),
+ _precios(map<Producto, Dinero>()),
+ _ventas(map<Persona, map<Producto, pair<Cantidad, Cantidad>>>()){}
+
 Puesto::Puesto(const Menu& precios,const Stock& stock, const Promociones& descuentos){
     _stock = stock;
     _precios = precios;
@@ -13,46 +19,46 @@ Puesto::Puesto(const Menu& precios,const Stock& stock, const Promociones& descue
         auto itCants = (itItems->second).begin(); //Voy a recorrer el diccLog(cant,desc) inorder
         int i = 0;
         while(i < itCants->first){
-            vectorDesc[i] = 0; // No hay descuento
+            vectorDesc.push_back(0); // No hay descuento
             i++;
         }
         while(itCants != (itItems->second).end()){
             Descuento desc = itCants->second; // Me guardo el descuento a insertar
             itCants++; // Avanzo para poner cota con la próxima cantidad
             while(i < itCants->first){
-                vectorDesc[i] = desc;
+                vectorDesc.push_back(desc);
                 i++;
             }
             if(itCants == (itItems->second).end()){
-                vectorDesc[i] = itCants->second; //Si llegue a la última cantidad
+                vectorDesc.push_back(itCants->second); //Si llegue a la última cantidad
             }
         }
-        diccVectores.insert({itItems->first, vectorDesc});
+        diccVectores.insert(make_pair(itItems->first, vectorDesc));
         itItems++;
     }
     _vectorDescuentos = diccVectores;
 }
 
-Cantidad Puesto::obtenerStock(Producto item){
-    return _stock[item];
+Cantidad Puesto::obtenerStock(Producto item) const{
+    return _stock.at(item);
 }
 
-bool Puesto::estaEnElMenu(Producto item){
+bool Puesto::estaEnElMenu(Producto item) const{
     return _stock.count(item) == 1;
 }
 
-map<Producto, Dinero> Puesto::obtenerPrecios(){
+map<Producto, Dinero> Puesto::obtenerPrecios() const{
     return _precios;
 }
 
-Descuento Puesto::obtenerDescuento(Producto item, Cantidad cantidad){
+Descuento Puesto::obtenerDescuento(Producto item, Cantidad cantidad) const{
     Descuento res = 0;
     if(_vectorDescuentos.count(item) == 1){
-        int longDesc = (_vectorDescuentos[item]).size();
-        if(cantidad > _vectorDescuentos[item][longDesc - 1]){
-            res = _vectorDescuentos[item][longDesc - 1];
+        int longDesc = (_vectorDescuentos.at(item)).size();
+        if(cantidad > _vectorDescuentos.at(item)[longDesc - 1]){
+            res = _vectorDescuentos.at(item)[longDesc - 1];
         }else{
-            res = _vectorDescuentos[item][cantidad];
+            res = _vectorDescuentos.at(item)[cantidad];
         }
     }
     return res;
@@ -62,8 +68,8 @@ Dinero Puesto::aplicarDescuento (Dinero dinero, Descuento desc){
     return dinero * (100-desc)/100;
 }
 
-Dinero Puesto::obtenerGasto( Persona a){
-    return _gastoPorPersona[a];
+Dinero Puesto::obtenerGasto( Persona a) const{
+    return _gastoPorPersona.at(a);
 }
 
 map<Producto , pair< Cantidad, Cantidad >> Puesto::obtenerVentas(Persona a){
@@ -80,7 +86,7 @@ Cantidad Puesto::obtenerCantVendidaSinDesc(Persona a, Producto item){
 
 void Puesto::registrarVenta(Persona a, Producto item, Cantidad cant){
     Cantidad nuevoStock = _stock[item] - cant;
-    _stock.insert({item, nuevoStock}); // Actualizo stock
+    _stock.insert(make_pair(item, nuevoStock)); // Actualizo stock
 
     Dinero gastoVentaSinDesc = _precios[item] * cant;
     Dinero gastoVentaConDesc = aplicarDescuento(gastoVentaSinDesc, obtenerDescuento(item, cant));
