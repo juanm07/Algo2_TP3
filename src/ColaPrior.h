@@ -5,46 +5,49 @@
 
 using namespace std;
 
-/* La clase T debe tener definido un operator<
- * que implemente una relación de orden total. */
-template<class T>
+
+
 class ColaPrior {
 public:
-    ColaPrior();
+	ColaPrior();
 
-    // Cantidad de elementos en la cola.
-    int tam() const;
+	// Cantidad de elementos en la cola.
+	int tam() const;
 
-    // Encola un elemento.
-    //
-    // Nota: si se implementa usando un vector, es O(n) en peor caso.
-    //
-    void encolar(const T& elem);
+	// Encola un elemento.
+	//
+	// Nota: si se implementa usando un vector, es O(n) en peor caso.
+	//
+	void encolar(const pair<int,map<int,int>::iterator>& elem);
 
-    // Devuelve el elemento de mayor prioridad.
-    // Pre: tam() > 0
-    const T& proximo() const;
+	// Devuelve el elemento de mayor prioridad.
+	// Pre: tam() > 0
+	const pair<int,map<int,int>::iterator>& proximo() const;
 
-    // Saca el elemento de mayor prioridad.
-    //
-    // Nota: si se implementa usando un vector, es O(n) en peor caso.
-    //
-    // Pre: tam() > 0
-    void desencolar();
+	// Saca el elemento de mayor prioridad.
+	//
+	// Nota: si se implementa usando un vector, es O(n) en peor caso.
+	//
+	// Pre: tam() > 0
+	void desencolar();
 
-    // Constructor que hace heapify.
-    ColaPrior(const vector<T>& elems);
+    pair<int,map<int,int>::iterator> indexar(int i);
+	// Constructor que hace heapify.
+	ColaPrior(const vector<pair<int,map<int,int>::iterator>>& elems);
 
-    T indexar(int i);
+    int padre(int n);
+
+    void heapifyUp(int indice);
+    void heapifyDown(int indice);
 
 
 
 private:
-    vector<T> heap;
-    void heapifyUp(int indice);
-    void heapifyDown(int indice);
+    vector<pair<int,map<int,int>::iterator>> heap;
+
 
 };
 
+#include "ColaPrior.hpp"
 
 #endif /*_COLAPRIOR_H_*/
