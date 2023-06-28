@@ -33,49 +33,49 @@ Puesto::Puesto(const Menu& precios,const Stock& stock, const Promociones& descue
     _vectorDescuentos = diccVectores;
 }
 
-Cantidad Puesto::obtenerStock(Producto item){
-    return _stock[item];
+Cantidad Puesto::obtenerStock(Producto item) const{
+    return _stock.at(item);
 }
 
-bool Puesto::estaEnElMenu(Producto item){
+bool Puesto::estaEnElMenu(Producto item) const {
     return _stock.count(item) == 1;
 }
 
-map<Producto, Dinero> Puesto::obtenerPrecios(){
+map<Producto, Dinero> Puesto::obtenerPrecios() const{
     return _precios;
 }
 
-Descuento Puesto::obtenerDescuento(Producto item, Cantidad cantidad){
+Descuento Puesto::obtenerDescuento(Producto item, Cantidad cantidad) const{
     Descuento res = 0;
     if(_vectorDescuentos.count(item) == 1){
-        int longDesc = (_vectorDescuentos[item]).size();
-        if(cantidad > _vectorDescuentos[item][longDesc - 1]){
-            res = _vectorDescuentos[item][longDesc - 1];
+        int longDesc = (_vectorDescuentos.at(item)).size();
+        if(cantidad > _vectorDescuentos.at(item)[longDesc - 1]){
+            res = _vectorDescuentos.at(item)[longDesc - 1];
         }else{
-            res = _vectorDescuentos[item][cantidad];
+            res = _vectorDescuentos.at(item)[cantidad];
         }
     }
     return res;
 }
 
-Dinero Puesto::aplicarDescuento (Dinero dinero, Descuento desc){
+Dinero Puesto::aplicarDescuento (Dinero dinero, Descuento desc) {
     return dinero * (100-desc)/100;
 }
 
-Dinero Puesto::obtenerGasto( Persona a){
-    return _gastoPorPersona[a];
+Dinero Puesto::obtenerGasto( Persona a) const{
+    return _gastoPorPersona.at(a);
 }
 
-map<Producto , pair< Cantidad, Cantidad >> Puesto::obtenerVentas(Persona a){
+map<Producto , pair< Cantidad, Cantidad >> Puesto::obtenerVentas(Persona a) const{
     map<Producto , pair< Cantidad, Cantidad >> res;
     if(_ventas.count(a) == 1){
-        res = _ventas[a];
+        res = _ventas.at(a);
     }
     return res;
 }
 
-Cantidad Puesto::obtenerCantVendidaSinDesc(Persona a, Producto item){
-    return _ventas[a][item].second;
+Cantidad Puesto::obtenerCantVendidaSinDesc(Persona a, Producto item) const{
+    return _ventas.at(a).at(item).second;
 }
 
 void Puesto::registrarVenta(Persona a, Producto item, Cantidad cant){
@@ -112,4 +112,8 @@ void Puesto::hackeoPuesto(Persona a, Producto item){
     Cantidad cantidadVendidaHackeada = _ventas[a][item].second - 1;
     Cantidad cantidadVendidaSinHackear = _ventas[a][item].first;
     _ventas[a].insert({item, make_pair(cantidadVendidaSinHackear, cantidadVendidaHackeada)}); // Actualizo ventas
+}
+
+Puesto::Puesto() {
+
 }
