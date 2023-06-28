@@ -72,16 +72,25 @@ void ColaPrior::heapifyDown(int indice) {
 
 
 void ColaPrior::heapifyUp(int indice) {
-    while(indice > 0){
-        unsigned int padre = (indice - 1)/2;
-        if(heap[indice].first > heap [padre].first){
-            swap(heap[indice],heap[padre]);
-        }
-        else{
-            break;
-        }
-        indice = padre;
-    }
+	while(indice > 0){
+	unsigned int padre = (indice - 1)/2;
+	if(heap[indice].first > heap [padre].first){
+	    heap[indice].second->second = padre; //Actualizo los indices en el diccionario
+	    heap[padre].second->second = indice; //Actualizo los indices en el diccionario
+	    swap(heap[indice],heap[padre]);
+	}else{
+	    if(heap[indice].first == heap[padre].first &&
+	       heap[indice].second->first > heap[indice].second->first){
+		heap[indice].second->second = padre; //Actualizo los indices en el diccionario
+		heap[padre].second->second = indice; //Actualizo los indices en el diccionario
+		swap(heap[indice],heap[padre]);
+	    }
+	    else{
+		break;
+	    }
+	}
+	indice = padre;
+	}
 }
 
 int ColaPrior::padre(int n) {
