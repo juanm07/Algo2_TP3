@@ -1,85 +1,98 @@
 #include "lollapatuza.h"
+#include "puesto.h"
+#include "puesto.cpp"
 
- Lollapatuza Lollapatuza::crearLolla(const map <IdPuesto, Puesto> &puestos, const vector<Persona> &personas) {
-     _personas = personas;
-     _puestos = puestos;
+lollapatuza lollapatuza::crearLolla(const map <IdPuesto, Puesto> &puestos, const vector<Persona> &personas) {
+    _personas = personas; //porque no toma los iguales
+    _puestos = puestos;
 
-     //Se declara como mayor consumidora a una persona, no importa quién sea.
-     _mayorConsumidora = personas[0];
+    //Se declara como mayor consumidora a una persona, no importa quién sea.
+    _mayorConsumidora = personas[0];
 
-     //Como los precios son los mismos no importa el puesto.
-     auto it = puestos.begin();
-     Puesto unPuesto = it->second;
-     _precios = unPuesto.obtenerPrecios(); // Antes estabamos accediendo a la variable interna 'precios' del módulo Puesto, lo que rompia el encapsulamiento
+    //Como los precios son los mismos no importa el puesto.
+    auto it = puestos.begin();
+    Puesto unPuesto = it->second;
+    _precios = unPuesto.obtenerPrecios(); //uso la funcion de puesto.cpp
 
-     int i = 0;
-     while (i < personas.size()) {
-         //Defino a todas las personas en puestos hackeables.
-         _puestosHackeables.insert(make_pair(personas[i], map<Producto, map<IdPuesto, Puesto*>>()));
+    int i = 0;
+    while (i < personas.size()) {
+        //Defino a todas las personas en puestos hackeables.
+        _puestosHackeables.insert({personas[i], info}); //que es info
 
-         //Defino a todas las personas en personasEnGasto junto con el indice.
-         auto itPersona = _personasEnGasto.insert(make_pair(personas[i], i));
+        //Defino a todas las personas en personasPorGasto junto con el indice.
+        _personasEnGasto.insert({personas[i], i}); //es personas en gasto???
 
-         _gastosPorPersona.encolar(make_pair(0, itPersona)); // Armo el MaxHeap
 
-         i++;
-     }
- }
+        // FALTA ARMAR EL MAXHEAP
 
-void Lollapatuza::registrarCompra(IdPuesto id, Persona a, Producto item, Cantidad cantidad) {
-    if(_consumosPorPersona.count(a) == 0){ //actualizo consumos
-        _consumosPorPersona.insert({a, _consumosPorPersona[a].insert({item,cantidad})});
+
+        i++;
+    }
+}
+
+void lollapatuza::registrarCompra(IdPuesto id, Persona a, Producto item, Cantidad cantidad) {
+
+    if(_consumosPorPersona.count(a) == 0){
+        _consumosPorPersona.insert({a, _consumosPorPersona[a].insert({item,cantidad})}); //como insertamos en un map
+    }else{void lollapatuza::hackear(lollapatuza lolla, Persona a, Producto item) {
+        Nat cantidadNueva = lolla._consumosPorPersona[a][item] -1;
+        lolla._consumosPorPersona[a][item] = cantidadNueva; //Actualizo consumos
+        int gastoViejo = _gastosPorPersona.indexar(lolla._personasEnGasto[a]).first;
+        (lolla._gastosPorPersona.indexar(lolla._personasEnGasto[a])).first = gastoViejo - lolla._precios[item];
+
+    }
+    if(_consumosPorPersona[a].count(item) == 0){
+        _consumosPorPersona[a].insert({item,cantidad});
     }else{
-        if(_consumosPorPersona[a].count(item) == 0){
-            _consumosPorPersona[a].insert({item,cantidad});
-        }else{
-            Cantidad cantAnterior = _consumosPorPersona[a][item];
-            _consumosPorPersona[a][item].insert(cantAnterior + cantidad);
-        }
+        Cantidad cantAnterior = _consumosPorPersona[a][item];
+        _consumosPorPersona[a][item].insert(cantAnterior + cantidad);
+    }
     }
 
     Puesto* puestoDeVenta;
-    puestoDeVenta = &_puestos[id]; // creamos un puntero al puesto
-    *puestoDeVenta.registrarVenta(a, item, cantidad);
+    puestoDeVenta = &_puestos[id];
+    //registrarVenta(*puestoDeVenta, a, item, cantidad);
+    //registrar compra o registar venta???
+    *puestoDeVenta.registrarVenta(a,item,cantidad);
 
     Dinero gasto = _precios[item] * cantidad;
+     _gastosPorPersona[_personasEnGasto[a]].first += aplicarDescuento(gasto,*puestoDeVenta->obtenerDescuento(item, cantidad));
 
-    _gastosPorPersona[_personasEnGasto[a]].first += aplicarDescuento(gasto, *puestoDeVenta.obtenerDescuento(item, cantidad));
+     heapify(_gastosPorPersona, _personasEnGasto[a]);
 
-    _gastosPorPersona.heapifyDown(_personasEnGasto[a]);
+     _mayorConsumidora = *(proximo(_gastosPorPersona).second);
 
-    _mayorConsumidora = *((_gastosPorPersona.proximo()).second); // Actualizo mayor consumidor
+     if(*puestoDeVenta->obtenerDescuento(item, cantidad)){ // obtener descuento no toma un puesto de venta)
+         if(_puestosHackeables[a].count(item) == 1){
+             if(_puestosHackeables[a][item].count(id) == 0) {
+                 _puestosHackeables[a][item].insert({id, puestoDeVenta});
+             }
+         }else{
+             _puestosHackeables[a].insert({id, map<id, puestoDeVenta>});
 
-    if(*puestoDeVenta.obtenerDescuento(item, cantidad) == 0){ // Veo si hay que agregar el puesto a PuestosHackeables
-        if(_puestosHackeables[a].count(item) == 1){
-            if(_puestosHackeables[a][item].count(id) == 0){
-                _puestosHackeables[a][item].insert({id, puestoDeVenta});
-            }
-        }else{
-            _puestosHackeables[a].insert({id, map<id, puestoDeVenta>});
+         }
 
-        }
-    }
+     }
 }
-  
-void Lollapatuza::hackear(Persona a, Producto item) {
+
+void lollapatuza::hackear(Persona a, Producto item) {
     Nat cantidadNueva = _consumosPorPersona[a][item] -1;
     _consumosPorPersona[a][item] = cantidadNueva; //Actualizo consumos
-    int gastoViejo = _gastosPorPersona.indexar(_personasEnGasto[a]).first;
+    Dinero gastoViejo = _gastosPorPersona.indexar(_personasEnGasto[a]).first;
     (_gastosPorPersona.indexar(_personasEnGasto[a])).first = gastoViejo - _precios[item];
 
 }
 
-Dinero Lollapatuza::gastoTotal(Persona a){
-    Indice i = _personasEnGasto[a];
-    return _gastosPorPersona[i].first;
+Nat lollapatuza::gastoTotal(Persona a){
+    int indicePersona = _personasEnGasto[a];
+    return (lolla._gastosPorPersona[indicePersona]).first;
 }
 
-Persona Lollapatuza::personaQueMasGasto(){
-    return _mayorConsumidora;
+Persona lollapatuza::personaQueMasGasto(lollapatuza lolla) {
+    return lolla._mayorConsumidora;
 }
 
-IdPuesto Lollapatuza::menorStock(Producto item){ //dudoso
+IdPuesto lollapatuza::menorStock(Producto item){ //dudoso
     IdPuesto res = nullptr;
     auto itPuesto = _puestos.begin();
     while(itPuesto != _puestos.end()){
@@ -105,10 +118,14 @@ IdPuesto Lollapatuza::menorStock(Producto item){ //dudoso
     return res;
 }
 
-vector<Persona> Lollapatuza::obtenerPersonas(){
+
+
+}
+
+set<Persona> lollapatuza::obtenerPersonas(lollapatuza lolla) {
     return _personas;
 }
 
-map<IdPuesto, Puesto> Lollapatuza::obtenerPuesto(){
+map<IdPuesto ,aed2_Puesto> lollapatuza::obtenerPuesto(lollapatuza lolla) {
     return _puestos;
 }
