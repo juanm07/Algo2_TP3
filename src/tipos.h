@@ -14,7 +14,7 @@ using Stock = map<Producto, Nat>;
 using Promociones = map<Producto, map<Nat, Nat>>;
 using Menu = map<Producto, Nat>;
 using Dinero = Nat;
-using Indice = Nat;
+using Indice = int;
 using Cantidad = Nat;
 using Descuento = Nat;
 
