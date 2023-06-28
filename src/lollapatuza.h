@@ -3,38 +3,40 @@
 
 
 #include<iterator>
-#include <set>
+#include <vector>
 #include "tipos.h"
-#include <queue>
-#include "puesto.h"
-#include <tuple>
+#include "puesto.cpp"
+#include "ColaPrior.hpp"
 
-class lollapatuza {
+class Lollapatuza {
 public:
-    lollapatuza crearLolla(const map<IdPuesto, aed2_Puesto>& puestos, const set<Persona>& personas);
 
-    void registrarCompra(lollapatuza lolla, IdPuesto id, Persona a, Producto item, Cantidad cantidad);
+    Lollapatuza();
 
-    void hackear(lollapatuza lolla, Persona a, Producto item);
+    Lollapatuza(const map<IdPuesto, Puesto>& puestos, const vector<Persona>& personas);
 
-    Nat gastoTotal(lollapatuza lolla, Persona a);
+    void registrarCompra(IdPuesto id, Persona a, Producto item, Cantidad cantidad);
 
-    Persona personaQueMasGasto(lollapatuza lolla);
+    void hackear(Persona a, Producto item);
 
-    IdPuesto menorStock(lollapatuza lolla, Producto item);
+    Dinero gastoTotal(Persona a) const;
 
-    set<Persona> obtenerPersonas(lollapatuza lolla);
+    Persona personaQueMasGasto() const;
 
-    map<IdPuesto, aed2_Puesto> obtenerPuesto(lollapatuza lolla);
+    IdPuesto menorStock(Producto item)const;
+
+    vector<Persona> obtenerPersonas()const;
+
+    map<IdPuesto, Puesto> obtenerPuesto()const;
 
 private:
-    set<Persona> _personas;
-    map<IdPuesto, aed2_Puesto> _puestos;
+    vector<Persona> _personas;
+    map<IdPuesto, Puesto> _puestos;
     Persona _mayorConsumidora;
     map<Persona, map<Producto, Cantidad>> _consumosPorPersona;
     map<Persona, map<Producto, map<IdPuesto, Puesto*>>> _puestosHackeables;
-    map<Producto, Nat> _precios;
-    queue<tuple<Nat,iterator>>  _gastosPorPersona;
+    map<Producto, Dinero> _precios;
+    ColaPrior<pair<Dinero, map<Persona,Indice>::iterator>>  _gastosPorPersona;
     map<Persona, Indice> _personasEnGasto;
 };
 
