@@ -2,7 +2,19 @@
 
 
 FachadaLollapatuza::FachadaLollapatuza(const set<Persona> &personas, const map<IdPuesto, aed2_Puesto> &infoPuestos) {
-    _lollapatuza.crearLolla(infoPuestos, vector<Persona>(personas.begin(), personas.end()));
+    //info puestos tiene stock promociones menu
+    auto it = infoPuestos.begin();
+    while(it!= infoPuestos.end()){
+        IdPuesto puestoId = it -> first;
+        Stock stock = it->second.stock;
+        Menu precios = it->second.menu;
+        Promociones descuento = it->second.promociones;
+        _puestos.insert(make_pair(it->first,Puesto(precios,stock,descuento)));
+        it++;
+        
+    }
+    
+    _lollapatuza.crearLolla(_puestos, vector<Persona>(personas.begin(), personas.end()));
 }
 
 void FachadaLollapatuza::registrarCompra(Persona persona, Producto producto, Nat cant, IdPuesto idPuesto) {
