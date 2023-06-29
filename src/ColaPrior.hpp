@@ -1,12 +1,14 @@
+#include "ColaPrior.h"
 
+template<class T>
 ColaPrior::ColaPrior(): heap() {}
 
-
+template<class T>
 int ColaPrior::tam() const {
 	return heap.size();
 }
 
-
+template<class T>
 void ColaPrior::encolar(const pair<int,map<int,int>::iterator>& elem) {
 	heap.push_back(elem);
     int n = heap.size()-1;
@@ -16,12 +18,12 @@ void ColaPrior::encolar(const pair<int,map<int,int>::iterator>& elem) {
     }
 }
 
-
+template<class T>
 const pair<int,map<int,int>::iterator>& ColaPrior::proximo() const {
 	return heap[0];
 }
 
-
+template<class T>
 void ColaPrior::desencolar() {
 	//Bajo la raiz
     heap[0] = heap.back();
@@ -29,7 +31,7 @@ void ColaPrior::desencolar() {
     heapifyDown(0);
 }
 
-
+template<class T>
 ColaPrior::ColaPrior(const vector<pair<int,map<int,int>::iterator>>& elems) {
 	heap = elems;
     int _size = heap.size();
@@ -38,7 +40,7 @@ ColaPrior::ColaPrior(const vector<pair<int,map<int,int>::iterator>>& elems) {
     }
 }
 
-
+template<class T>
 void ColaPrior::heapifyDown(int indice) {
     int size = heap.size();
     int hijoIzq = 2 * indice + 1;
@@ -70,7 +72,7 @@ void ColaPrior::heapifyDown(int indice) {
     }
 }
 
-
+template<class T>
 void ColaPrior::heapifyUp(int indice) {
 	while(indice > 0){
 	int padre = (indice - 1)/2;
@@ -93,6 +95,7 @@ void ColaPrior::heapifyUp(int indice) {
 	}
 }
 
+template<class T>
 int ColaPrior::padre(int n) {
     int res;
     if (n % 2 == 0){
@@ -104,10 +107,12 @@ int ColaPrior::padre(int n) {
     return res;
 }
 
+template<class T>
 pair<int, map<int, int>::iterator> ColaPrior<T>::indexar(int i) const {
     return heap.at(i);
 }
 
+template<class T>
 void ColaPrior<T>::reemplazar(int indice, const T& nuevoValor) {
     heap[indice] = nuevoValor;
 }
