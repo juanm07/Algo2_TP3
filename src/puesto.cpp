@@ -9,8 +9,8 @@ Puesto::Puesto(): _stock(map<Producto, Nat>()),
 Puesto::Puesto(const Menu& precios,const Stock& stock, const Promociones& descuentos){
    _stock = stock;
     _precios = precios;
-    map<Persona, Dinero> _gastoPorPersona;
-    map<Persona, map<Producto, pair<Cantidad, Cantidad>>> _ventas ;
+    _gastoPorPersona = map<Persona, Dinero>();
+    _ventas = map<Persona, map<Producto, pair<Cantidad, Cantidad>>>() ;
 
     auto itItems = descuentos.begin();
     map<Producto, vector<Descuento>> diccVectores;
@@ -91,29 +91,30 @@ void Puesto::registrarVenta(Persona a, Producto item, Cantidad cant){
     Dinero gastoVentaSinDesc = _precios[item] * cant;
     Dinero gastoVentaConDesc = aplicarDescuento(gastoVentaSinDesc, obtenerDescuento(item, cant));
     Dinero nuevoGastoTotalPersona = _gastoPorPersona[a] + gastoVentaConDesc;
-    _gastoPorPersona.insert({a, nuevoGastoTotalPersona}); // Actualizo el gasto de la persona
+     _gastoPorPersona[a] = nuevoGastoTotalPersona; // Actualizo el gasto de la persona
 
     if(_ventas[a].count(item) == 1){ // Actualizo ventas
         pair<Cantidad, Cantidad> cantAnterior = _ventas[a][item];
         if(obtenerDescuento( item, cant) == 0){
-            _ventas[a].insert({item, make_pair(cantAnterior.second + cant, cantAnterior.first)});
+            _ventas[a].insert({item, make_pair(cantAnterior.first, cantAnterior.second + cant)});
         }else{
-            _ventas[a].insert({item, make_pair(cantAnterior.second, cantAnterior.first + cant)});
+            _ventas[a].insert({item, make_pair(cantAnterior.first + cant, cantAnterior.second)});
         }
     }else{
         if(obtenerDescuento( item, cant) == 0){
-            _ventas[a].insert({item, make_pair(cant, 0)});
-        }else{
             _ventas[a].insert({item, make_pair(0, cant)});
+        }else{
+            _ventas[a].insert({item, make_pair(cant, 0)});
         }
     }
 }
 
 void Puesto::hackeoPuesto(Persona a, Producto item){
-    _stock.insert({item, _stock[item] + 1}); // Actualizo stock
+   Nat stockAntiguo = _stock[item];
+    _stock[item] =  stockAntiguo + 1; // Actualizo stock
 
     Dinero gastoHackeado = _gastoPorPersona[a] - _precios[item];
-    _gastoPorPersona.insert({a, gastoHackeado}); // Actualizo gasto
+    _gastoPorPersona[a] =  gastoHackeado; // Actualizo gasto
 
     Cantidad cantidadVendidaHackeada = _ventas[a][item].second - 1;
     Cantidad cantidadVendidaSinHackear = _ventas[a][item].first;
