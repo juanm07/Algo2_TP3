@@ -53,17 +53,17 @@ const set<Persona> &FachadaLollapatuza::personas() const {
 
 Nat FachadaLollapatuza::stockEnPuesto(IdPuesto idPuesto, const Producto &producto) const {
     map<IdPuesto,Puesto> puestos = _lollapatuza.obtenerPuestos();
-    return puestos.at(idPuesto).obtenerStock(producto);
+    return puestos[idPuesto].obtenerStock(producto);
 }
 
 Nat FachadaLollapatuza::descuentoEnPuesto(IdPuesto idPuesto, const Producto &producto, Nat cantidad) const {
     map<IdPuesto,Puesto> puestos = _lollapatuza.obtenerPuestos();
-    return puestos.at(idPuesto).obtenerDescuento(producto, cantidad);
+    return puestos[idPuesto].obtenerDescuento(producto, cantidad);
 }
 
 Nat FachadaLollapatuza::gastoEnPuesto(IdPuesto idPuesto, Persona persona) const {
     map<IdPuesto,Puesto> puestos = _lollapatuza.obtenerPuestos();
-    return puestos.at(idPuesto).obtenerGasto(persona);
+    return puestos[idPuesto].obtenerDescuento(producto, cantidad);
 }
 
 set<IdPuesto> FachadaLollapatuza::idsDePuestos() const {
