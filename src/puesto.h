@@ -24,9 +24,9 @@ public:
 
     Dinero obtenerGasto(Persona a) const;
 
-    map<Producto , pair< Cantidad, Cantidad >> obtenerVentas(Persona a) const;
+    map<Producto , pair< Cantidad, Cantidad >> obtenerVentas(Persona a);
 
-    Cantidad obtenerCantVendidaSinDesc(Persona a, Producto item) const;
+    Cantidad obtenerCantVendidaSinDesc(Persona a, Producto item);
 
     void registrarVenta(Persona a, Producto item, Cantidad cantidad);
 
