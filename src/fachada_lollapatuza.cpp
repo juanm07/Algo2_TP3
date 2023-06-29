@@ -44,11 +44,11 @@ IdPuesto FachadaLollapatuza::menorStock(Producto producto) const {
 
 const set<Persona> &FachadaLollapatuza::personas() const {
     vector<Persona> vectorPersonas = _lollapatuza.obtenerPersonas();
-    set<Persona>* res = new set<Persona>();
-    for (Persona p : vectorPersonas) {
-        res->insert(p);
+    static set<Persona> res;
+    for(Persona p : vectorPersonas){
+        res.insert(p);
     }
-    return *res;
+    return res;
 }
 
 Nat FachadaLollapatuza::stockEnPuesto(IdPuesto idPuesto, const Producto &producto) const {
