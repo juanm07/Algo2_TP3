@@ -30,7 +30,7 @@ _personasEnGasto(map<Persona, Indice> ()) {}
  }
 
 void Lollapatuza::registrarCompra(IdPuesto id, Persona a, Producto item, Cantidad cantidad) {
-    if(_consumosPorPersona.count(a) == 0){ //actualizo consumos
+     if(_consumosPorPersona.count(a) == 0){ //actualizo consumos
         _consumosPorPersona[a][item] = cantidad;
     }else{
         if(_consumosPorPersona[a].count(item) == 0){
@@ -52,7 +52,7 @@ void Lollapatuza::registrarCompra(IdPuesto id, Persona a, Producto item, Cantida
     auto itPersona = _gastosPorPersona.indexar(_personasEnGasto[a]).second; //Me guardo el iterador que esta en el maxHeap
     pair<Dinero, map<Persona,Indice>::iterator>aInsertar = make_pair(nuevoGasto,itPersona); //Me armo la tupla que va a reemplazar a la vieja
 
-    _gastosPorPersona.indexar(_personasEnGasto[a]) = aInsertar; //Reemplazo la tupla vieja por la nueva con el gasto actualizado
+    _gastosPorPersona.reemplazar(_personasEnGasto[a], aInsertar); //Reemplazo la tupla vieja por la nueva con el gasto actualizado
     _gastosPorPersona.heapifyUp(_personasEnGasto[a]); //Como el gasto aumento tengo que ver si la tupla sube o si se queda ahi
 
     auto itMayorConsumidor = (_gastosPorPersona.proximo()).second; // Actualizo mayor consumidor
@@ -72,24 +72,23 @@ void Lollapatuza::registrarCompra(IdPuesto id, Persona a, Producto item, Cantida
 }
 
 void Lollapatuza::hackear(Persona a, Producto item) {
-    Nat cantidadNueva = _consumosPorPersona[a][item] -1;
+     Nat cantidadNueva = _consumosPorPersona[a][item] -1;
     _consumosPorPersona[a][item] = cantidadNueva; //Actualizo consumos
 
     Dinero gastoViejo = _gastosPorPersona.indexar(_personasEnGasto[a]).first;
     Dinero nuevoGasto = gastoViejo - _precios[item];
     auto itPersona = _gastosPorPersona.indexar(_personasEnGasto[a]).second;
     pair<Dinero, map<Persona,Indice>::iterator>aInsertar = make_pair(nuevoGasto,itPersona); //Me armo la tupla que va a reemplazar a la vieja
-    _gastosPorPersona.indexar(_personasEnGasto[a]) = aInsertar; //Reemplazo la tupla vieja por la nueva de arriba
+    _gastosPorPersona.reemplazar(_personasEnGasto[a], aInsertar); //Reemplazo la tupla vieja por la nueva de arriba
     _gastosPorPersona.heapifyDown(_personasEnGasto[a]); //Hago heapify para abajo porque disminui el valor
     _mayorConsumidora = (_gastosPorPersona.proximo().second)->first;
     auto it = _puestosHackeables[a][item].begin();
     Puesto* puesto = it->second;
     puesto->hackeoPuesto(a,item);
 
-    if(puesto->obtenerCantVendidaSinDesc(a,item) == 0){
-        _puestosHackeables[a][item].erase(it->first);
+    if (puesto->obtenerCantVendidaSinDesc(a, item) == 0) {
+        _puestosHackeables[a][item].erase(it);
     }
-
 
 }
 
