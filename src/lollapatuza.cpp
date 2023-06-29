@@ -1,36 +1,37 @@
 #include "lollapatuza.h"
-Lollapatuza::Lollapatuza(): _personas(vector<Persona>()), _puestos(map<IdPuesto, Puesto> ()),_mayorConsumidora(0), _consumosPorPersona(map<Persona, map<Producto, Cantidad>> ()),
- _puestosHackeables(map<Persona, map<Producto, map<IdPuesto, Puesto*>>>()), _precios(map<Producto, Dinero> ()), _gastosPorPersona(ColaPrior<pair<Dinero, map<Persona,Indice>::iterator>>()),
-_personasEnGasto(map<Persona, Indice> ()) {}
 
- Lollapatuza::Lollapatuza(const map <IdPuesto, Puesto> &puestos, const vector<Persona> &personas){
-     _personas = personas;
-     _puestos = puestos;
+Lollapatuza::Lollapatuza():  _personas(vector<Persona>()), _puestos(map<IdPuesto, Puesto> ()),_mayorConsumidora(0), _consumosPorPersona(map<Persona, map<Producto, Cantidad>> ()),
+                             _puestosHackeables(map<Persona, map<Producto, map<IdPuesto, Puesto*>>>()), _precios(map<Producto, Dinero> ()), _gastosPorPersona(ColaPrior<pair<Dinero, map<Persona,Indice>::iterator>>()),
+                             _personasEnGasto(map<Persona, Indice> ()) {}
 
-     //Se declara como mayor consumidora a una persona, no importa quién sea.
-     _mayorConsumidora = personas[0];
+Lollapatuza::Lollapatuza(const map <IdPuesto, Puesto> &puestos, const vector<Persona> &personas){
+    _personas = personas;
+    _puestos = puestos;
 
-     //Como los precios son los mismos no importa el puesto.
-     auto it = puestos.begin();
-     Puesto unPuesto = it->second;
-     _precios = unPuesto.obtenerPrecios(); // Antes estabamos accediendo a la variable interna 'precios' del módulo Puesto, lo que rompia el encapsulamiento
+    //Se declara como mayor consumidora a una persona, no importa quién sea.
+    _mayorConsumidora = personas[0];
 
-     int i = 0;
-     while (i < personas.size()) {
-         //Defino a todas las personas en puestos hackeables.
-         _puestosHackeables.insert(make_pair(personas[i], map<Producto, map<IdPuesto, Puesto*>>()));
+    //Como los precios son los mismos no importa el puesto.
+    auto it = puestos.begin();
+    Puesto unPuesto = it->second;
+    _precios = unPuesto.obtenerPrecios(); // Antes estabamos accediendo a la variable interna 'precios' del módulo Puesto, lo que rompia el encapsulamiento
 
-         //Defino a todas las personas en personasEnGasto junto con el indice.
-         auto itPersona = _personasEnGasto.insert(make_pair(personas[i], i)).first;
+    int i = 0;
+    while (i < personas.size()) {
+        //Defino a todas las personas en puestos hackeables.
+        _puestosHackeables.insert(make_pair(personas[i], map<Producto, map<IdPuesto, Puesto*>>()));
 
-         _gastosPorPersona.encolar(make_pair(0, itPersona)); // Armo el MaxHeap
+        //Defino a todas las personas en personasEnGasto junto con el indice.
+        auto itPersona = _personasEnGasto.insert(make_pair(personas[i], i)).first;
 
-         i++;
-     }
- }
+        _gastosPorPersona.encolar(make_pair(0, itPersona)); // Armo el MaxHeap
+
+        i++;
+    }
+}
 
 void Lollapatuza::registrarCompra(IdPuesto id, Persona a, Producto item, Cantidad cantidad) {
-     if(_consumosPorPersona.count(a) == 0){ //actualizo consumos
+    if(_consumosPorPersona.count(a) == 0){ //actualizo consumos
         _consumosPorPersona[a][item] = cantidad;
     }else{
         if(_consumosPorPersona[a].count(item) == 0){
@@ -42,7 +43,7 @@ void Lollapatuza::registrarCompra(IdPuesto id, Persona a, Producto item, Cantida
     }
 
     Puesto *puestoDeVenta;
-    puestoDeVenta = &_puestos.at(id); // creamos un puntero al puesto
+    puestoDeVenta = &_puestos[id]; // creamos un puntero al puesto
     puestoDeVenta->registrarVenta(a, item, cantidad);
 
     Dinero gasto = _precios[item] * cantidad;
@@ -72,7 +73,7 @@ void Lollapatuza::registrarCompra(IdPuesto id, Persona a, Producto item, Cantida
 }
 
 void Lollapatuza::hackear(Persona a, Producto item) {
-     Nat cantidadNueva = _consumosPorPersona[a][item] -1;
+    Nat cantidadNueva = _consumosPorPersona[a][item] -1;
     _consumosPorPersona[a][item] = cantidadNueva; //Actualizo consumos
 
     Dinero gastoViejo = _gastosPorPersona.indexar(_personasEnGasto[a]).first;
@@ -134,4 +135,3 @@ vector<Persona> Lollapatuza::obtenerPersonas() const{
 map<IdPuesto, Puesto> Lollapatuza::obtenerPuestos() const{
     return _puestos;
 }
-
