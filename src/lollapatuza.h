@@ -5,7 +5,7 @@
 #include<iterator>
 #include <vector>
 #include "tipos.h"
-#include "puesto.cpp"
+#include "puesto.h"
 #include "ColaPrior.hpp"
 
 class Lollapatuza {
@@ -27,7 +27,7 @@ public:
 
     vector<Persona> obtenerPersonas()const;
 
-    map<IdPuesto, Puesto> obtenerPuesto()const;
+    map<IdPuesto, Puesto> obtenerPuestos()const;
 
 private:
     vector<Persona> _personas;
