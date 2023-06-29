@@ -1,8 +1,10 @@
 #include "fachada_lollapatuza.h"
 
+
+
 FachadaLollapatuza::FachadaLollapatuza(const set<Persona> &personas, const map<IdPuesto, aed2_Puesto> &infoPuestos) {
     //info puestos tiene stock promociones menu
-    map<IdPuesto,Puesto> puestos = map<IdPuesto ,Puesto>();
+    map<IdPuesto, Puesto> puestos = map<IdPuesto, Puesto>();
     auto it = infoPuestos.begin();
     while(it!= infoPuestos.end()){
         IdPuesto puestoId = it -> first;
@@ -11,15 +13,13 @@ FachadaLollapatuza::FachadaLollapatuza(const set<Persona> &personas, const map<I
         Promociones descuentos = it->second.promociones;
         puestos.insert(make_pair(puestoId,Puesto(precios,stock,descuentos)));
         it++;
-
+    }
+    vector<Persona> personasVec;
+    for(Persona p: personas){
+        personasVec.push_back(p);
     }
 
-     vector<Persona> personasVec;
-     for(Persona p: personas){
-        personasVec.push_back(p);
-     }
-
-   _lollapatuza = Lollapatuza(puestos, personasVec);
+    _lollapatuza = Lollapatuza(puestos, personasVec);
 }
 
 void FachadaLollapatuza::registrarCompra(Persona persona, Producto producto, Nat cant, IdPuesto idPuesto) {
@@ -43,7 +43,7 @@ IdPuesto FachadaLollapatuza::menorStock(Producto producto) const {
 }
 
 const set<Persona> &FachadaLollapatuza::personas() const {
-   vector<Persona> vectorPersonas = _lollapatuza.obtenerPersonas();
+    vector<Persona> vectorPersonas = _lollapatuza.obtenerPersonas();
     set<Persona>* res = new set<Persona>();
     for (Persona p : vectorPersonas) {
         res->insert(p);
@@ -68,11 +68,11 @@ Nat FachadaLollapatuza::gastoEnPuesto(IdPuesto idPuesto, Persona persona) const 
 
 set<IdPuesto> FachadaLollapatuza::idsDePuestos() const {
     map<IdPuesto,Puesto> puestos = _lollapatuza.obtenerPuestos();
-    auto it = puestos.begin();
     set<IdPuesto> res;
+    auto it = puestos.begin();
     while(it != puestos.end()){
         res.insert(it->first);
-        it ++;
+        it++;
     }
     return res;
 }
