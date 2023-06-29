@@ -6,7 +6,7 @@
 using namespace std;
 
 
-
+template<class T>
 class ColaPrior {
 public:
 	ColaPrior();
@@ -31,7 +31,7 @@ public:
 	// Pre: tam() > 0
 	void desencolar();
 
-    pair<int,map<int,int>::iterator> indexar(int i);
+    pair<int,map<int,int>::iterator> indexar(int i) const;
 	// Constructor que hace heapify.
 	ColaPrior(const vector<pair<int,map<int,int>::iterator>>& elems);
 
@@ -40,14 +40,13 @@ public:
     void heapifyUp(int indice);
     void heapifyDown(int indice);
 
+    void reemplazar(int indice, const T& nuevoValor);
+
 
 
 private:
     vector<pair<int,map<int,int>::iterator>> heap;
-
-
 };
 
-#include "ColaPrior.hpp"
 
 #endif /*_COLAPRIOR_H_*/
