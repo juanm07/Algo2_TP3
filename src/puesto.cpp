@@ -1,7 +1,13 @@
 #include "puesto.h"
 
+Puesto::Puesto(): _stock(map<Producto, Nat>()),
+                  _vectorDescuentos(map<Producto, vector<Descuento>>()),
+                  _gastoPorPersona(map<Persona, Dinero>()),
+                  _precios(map<Producto, Dinero>()),
+                  _ventas(map<Persona, map<Producto, pair<Cantidad, Cantidad>>>()){}
+
 Puesto::Puesto(const Menu& precios,const Stock& stock, const Promociones& descuentos){
-    _stock = stock;
+   _stock = stock;
     _precios = precios;
     map<Persona, Dinero> _gastoPorPersona;
     map<Persona, map<Producto, pair<Cantidad, Cantidad>>> _ventas ;
@@ -13,21 +19,21 @@ Puesto::Puesto(const Menu& precios,const Stock& stock, const Promociones& descue
         auto itCants = (itItems->second).begin(); //Voy a recorrer el diccLog(cant,desc) inorder
         int i = 0;
         while(i < itCants->first){
-            vectorDesc[i] = 0; // No hay descuento
+            vectorDesc.push_back(0); // No hay descuento
             i++;
         }
         while(itCants != (itItems->second).end()){
             Descuento desc = itCants->second; // Me guardo el descuento a insertar
             itCants++; // Avanzo para poner cota con la próxima cantidad
             while(i < itCants->first){
-                vectorDesc[i] = desc;
+                vectorDesc.push_back(desc);
                 i++;
             }
             if(itCants == (itItems->second).end()){
-                vectorDesc[i] = itCants->second; //Si llegue a la última cantidad
+                vectorDesc.push_back(itCants->second); //Si llegue a la última cantidad
             }
         }
-        diccVectores.insert({itItems->first, vectorDesc});
+        diccVectores.insert(make_pair(itItems->first, vectorDesc));
         itItems++;
     }
     _vectorDescuentos = diccVectores;
@@ -69,18 +75,18 @@ Dinero Puesto::obtenerGasto( Persona a) const{
 map<Producto , pair< Cantidad, Cantidad >> Puesto::obtenerVentas(Persona a) const{
     map<Producto , pair< Cantidad, Cantidad >> res;
     if(_ventas.count(a) == 1){
-        res = _ventas.at(a);
+        res = _ventas[a];
     }
     return res;
 }
 
 Cantidad Puesto::obtenerCantVendidaSinDesc(Persona a, Producto item) const{
-    return _ventas.at(a).at(item).second;
+    return _ventas[a][item].second;
 }
 
 void Puesto::registrarVenta(Persona a, Producto item, Cantidad cant){
     Cantidad nuevoStock = _stock[item] - cant;
-    _stock.insert({item, nuevoStock}); // Actualizo stock
+    _stock[item] = nuevoStock; // Actualizo stock
 
     Dinero gastoVentaSinDesc = _precios[item] * cant;
     Dinero gastoVentaConDesc = aplicarDescuento(gastoVentaSinDesc, obtenerDescuento(item, cant));
@@ -114,6 +120,3 @@ void Puesto::hackeoPuesto(Persona a, Producto item){
     _ventas[a].insert({item, make_pair(cantidadVendidaSinHackear, cantidadVendidaHackeada)}); // Actualizo ventas
 }
 
-Puesto::Puesto() {
-
-}
