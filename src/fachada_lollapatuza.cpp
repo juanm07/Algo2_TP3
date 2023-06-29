@@ -63,7 +63,7 @@ Nat FachadaLollapatuza::descuentoEnPuesto(IdPuesto idPuesto, const Producto &pro
 
 Nat FachadaLollapatuza::gastoEnPuesto(IdPuesto idPuesto, Persona persona) const {
     map<IdPuesto,Puesto> puestos = _lollapatuza.obtenerPuestos();
-    return puestos[idPuesto].obtenerDescuento(producto, cantidad);
+    return puestos[idPuesto].obtenerGasto(persona);
 }
 
 set<IdPuesto> FachadaLollapatuza::idsDePuestos() const {
