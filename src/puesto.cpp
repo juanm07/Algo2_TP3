@@ -6,15 +6,15 @@ Puesto::Puesto(): _stock(map<Producto, Nat>()),
                   _precios(map<Producto, Dinero>()),
                   _ventas(map<Persona, map<Producto, pair<Cantidad, Cantidad>>>()){}
 
-Puesto::Puesto(const Menu& precios,const Stock& stock, const Promociones& descuentos){
-   _stock = stock;
+Puesto::Puesto(const Menu& precios, const Stock& stock, const Promociones& descuentos) {
+    _stock = stock;
     _precios = precios;
 
     auto itItems = descuentos.begin();
     map<Producto, vector<Descuento>> diccVectores;
-    while(itItems != descuentos.end()){
+    while (itItems != descuentos.end()) {
         vector<Descuento> vectorDesc;
-        auto itCants = (itItems->second).begin(); //Voy a recorrer el diccLog(cant,desc) inorder
+        auto itCants = (itItems->second).begin(); // Voy a recorrer el diccLog(cant,desc) inorder
         int i = 0;
         while (i < itCants->first) {
             vectorDesc.push_back(0); // No hay descuento
@@ -32,6 +32,7 @@ Puesto::Puesto(const Menu& precios,const Stock& stock, const Promociones& descue
                 vectorDesc.push_back(desc); // Si llegué a la última cantidad
             }
         }
+
         diccVectores.insert(make_pair(itItems->first, vectorDesc));
         itItems++;
     }
@@ -42,7 +43,7 @@ Cantidad Puesto::obtenerStock(Producto item) const{
     return _stock.at(item);
 }
 
-bool Puesto::estaEnElMenu(Producto item) const {
+bool Puesto::estaEnElMenu(Producto item) const{
     return _stock.count(item) == 1;
 }
 
@@ -53,8 +54,8 @@ map<Producto, Dinero> Puesto::obtenerPrecios() const{
 Descuento Puesto::obtenerDescuento(Producto item, Cantidad cantidad) const{
     Descuento res = 0;
     if(_vectorDescuentos.count(item) == 1){
-        int longDesc = (_vectorDescuentos.at(item)).size();
-        if(cantidad > _vectorDescuentos.at(item)[longDesc - 1]){
+        Nat longDesc = (_vectorDescuentos.at(item)).size();
+        if(cantidad >= longDesc){
             res = _vectorDescuentos.at(item)[longDesc - 1];
         }else{
             res = _vectorDescuentos.at(item)[cantidad];
@@ -75,7 +76,7 @@ Dinero Puesto::obtenerGasto( Persona a) const{
     }
 }
 
-map<Producto , pair< Cantidad, Cantidad >> Puesto::obtenerVentas(Persona a) const{
+map<Producto , pair< Cantidad, Cantidad >> Puesto::obtenerVentas(Persona a){
     map<Producto , pair< Cantidad, Cantidad >> res;
     if(_ventas.count(a) == 1){
         res = _ventas[a];
@@ -83,7 +84,7 @@ map<Producto , pair< Cantidad, Cantidad >> Puesto::obtenerVentas(Persona a) cons
     return res;
 }
 
-Cantidad Puesto::obtenerCantVendidaSinDesc(Persona a, Producto item) const{
+Cantidad Puesto::obtenerCantVendidaSinDesc(Persona a, Producto item){
     return _ventas[a][item].second;
 }
 
@@ -94,14 +95,14 @@ void Puesto::registrarVenta(Persona a, Producto item, Cantidad cant){
     Dinero gastoVentaSinDesc = _precios[item] * cant;
     Dinero gastoVentaConDesc = aplicarDescuento(gastoVentaSinDesc, obtenerDescuento(item, cant));
     Dinero nuevoGastoTotalPersona = _gastoPorPersona[a] + gastoVentaConDesc;
-     _gastoPorPersona[a] = nuevoGastoTotalPersona; // Actualizo el gasto de la persona
+    _gastoPorPersona[a] = nuevoGastoTotalPersona; // Actualizo el gasto de la persona
 
     if(_ventas[a].count(item) == 1){ // Actualizo ventas
         pair<Cantidad, Cantidad> cantAnterior = _ventas[a][item];
         if(obtenerDescuento( item, cant) == 0){
             _ventas[a][item] = make_pair(cantAnterior.first, cantAnterior.second + cant);
         }else{
-            _ventas[a][item] = make_pair(cantAnterior.first + cant, cantAnterior.second);
+            _ventas[a][item] =  make_pair(cantAnterior.first + cant, cantAnterior.second);
         }
     }else{
         if(obtenerDescuento( item, cant) == 0){
@@ -113,7 +114,7 @@ void Puesto::registrarVenta(Persona a, Producto item, Cantidad cant){
 }
 
 void Puesto::hackeoPuesto(Persona a, Producto item){
-   Nat stockAntiguo = _stock[item];
+    Nat stockAntiguo = _stock[item];
     _stock[item] =  stockAntiguo + 1; // Actualizo stock
 
     Dinero gastoHackeado = _gastoPorPersona[a] - _precios[item];
@@ -123,4 +124,3 @@ void Puesto::hackeoPuesto(Persona a, Producto item){
     Cantidad cantidadVendidaSinHackear = _ventas[a][item].first;
     _ventas[a][item] = make_pair(cantidadVendidaSinHackear, cantidadVendidaHackeada); // Actualizo ventas
 }
-
