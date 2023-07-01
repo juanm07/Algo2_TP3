@@ -4,6 +4,7 @@
 #include <set>
 #include "tipos.h"
 #include "lollapatuza.h"
+#include "puesto.h"
 
 
 class FachadaLollapatuza {
@@ -31,7 +32,9 @@ public:
 
 private:
     Lollapatuza _lollapatuza;
+
+
+
 };
 
 #endif
-
