@@ -673,3 +673,36 @@ TEST_F(LollaTest, hackear_altera_puesto_menor_id) {
     EXPECT_EQ(l.gastoEnPuesto(7, 9), 0);
     EXPECT_EQ(l.idsDePuestos(), idsPuestos);
 }
+
+
+//Nuestro test
+TEST_F(LollaTest, hackear_mayor_consumidor) {
+    FachadaLollapatuza l(personas, puestos);
+    l.registrarCompra(4, 5, 2, 6);//5000sindesc
+    l.registrarCompra(8, 5, 2, 6);//5000sindesc
+    l.registrarCompra(2, 3, 5, 7);//2500sindesc->1750 condesc
+    l.registrarCompra(2, 3, 1, 2);//500
+    l.registrarCompra(9, 7, 1, 2);//2000sindesc
+    EXPECT_EQ(l.gastoTotal(4), 5000);
+    EXPECT_EQ(l.gastoTotal(8), 5000);
+    EXPECT_EQ(l.gastoTotal(2), 2250);
+    EXPECT_EQ(l.gastoTotal(9), 2000);
+    EXPECT_EQ(l.mayorGastador(), 4); // En nuestra especificación se desempata por menor ID.
+    EXPECT_EQ(l.menorStock(5), 7);
+    EXPECT_EQ(l.menorStock(3), 6);
+    EXPECT_EQ(l.menorStock(7), 6);
+    EXPECT_EQ(l.stockEnPuesto(6, 5), 21);
+    EXPECT_EQ(l.stockEnPuesto(7, 3), 15);
+    EXPECT_EQ(l.stockEnPuesto(2, 7), 9);
+    l.hackear(4, 5);
+    EXPECT_EQ(l.stockEnPuesto(6, 5), 22);
+    EXPECT_EQ(l.mayorGastador(), 8);
+    EXPECT_EQ(l.personas(), personas);
+    EXPECT_EQ(l.gastoEnPuesto(6, 8), 5000);
+    EXPECT_EQ(l.gastoEnPuesto(6, 4), 2500);
+    EXPECT_EQ(l.gastoEnPuesto(7, 2), 1750);
+    EXPECT_EQ(l.gastoEnPuesto(2, 2), 500);
+    EXPECT_EQ(l.gastoEnPuesto(2, 9), 2000);
+
+
+}
