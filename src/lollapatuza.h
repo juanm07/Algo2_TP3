@@ -10,6 +10,7 @@
 
 class Lollapatuza {
 public:
+
     Lollapatuza();
 
     Lollapatuza(const map<IdPuesto, Puesto>& puestos, const vector<Persona>& personas);
@@ -22,11 +23,11 @@ public:
 
     Persona personaQueMasGasto() const;
 
-    IdPuesto menorStock(Producto item) const;
+    IdPuesto menorStock(Producto item)const;
 
-    vector<Persona> obtenerPersonas() const;
+    const vector<Persona>& obtenerPersonas()const;
 
-    map<IdPuesto, Puesto> obtenerPuestos() const;
+    const map<IdPuesto, Puesto>& obtenerPuestos()const;
 
 private:
     vector<Persona> _personas;
@@ -41,4 +42,3 @@ private:
 
 
 #endif //TP3_LOLLAPATUZA_H
-
