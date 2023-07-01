@@ -40,14 +40,13 @@ public:
     void heapifyUp(int indice);
     void heapifyDown(int indice);
 
+    void reemplazar(int indice, const T& nuevoValor);
+
 
 
 private:
     vector<pair<int,map<int,int>::iterator>> heap;
-
-
 };
-
 
 
 #endif /*_COLAPRIOR_H_*/
