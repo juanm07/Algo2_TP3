@@ -3,12 +3,12 @@ template<class T>
 ColaPrior<T>::ColaPrior(): heap() {}
 
 template<class T>
-int ColaPrior<T>::tam() const {
+int ColaPrior<T>::tam() const { // O(1)
     return heap.size();
 }
 
 template<class T>
-void ColaPrior<T>::encolar(const pair<int,map<int,int>::iterator>& elem) {
+void ColaPrior<T>::encolar(const pair<int,map<int,int>::iterator>& elem) { // O(log(A))
     heap.push_back(elem);
     int n = heap.size()-1;
     while (n > 0 && heap[padre(n)].first < heap[n].first){
@@ -18,12 +18,12 @@ void ColaPrior<T>::encolar(const pair<int,map<int,int>::iterator>& elem) {
 }
 
 template<class T>
-const pair<int,map<int,int>::iterator>& ColaPrior<T>::proximo() const {
+const pair<int,map<int,int>::iterator>& ColaPrior<T>::proximo() const { //O(1)
     return heap[0];
 }
 
 template<class T>
-void ColaPrior<T>::desencolar() {
+void ColaPrior<T>::desencolar() { // O(log(A))
     //Bajo la raiz
     heap[0] = heap.back();
     heap.pop_back();
@@ -40,7 +40,7 @@ ColaPrior<T>::ColaPrior(const vector<pair<int,map<int,int>::iterator>>& elems) {
 }
 
 template<class T>
-void ColaPrior<T>::heapifyDown(int indice) {
+void ColaPrior<T>::heapifyDown(int indice) { //O(log(A))
     int size = heap.size();
     int hijoIzq = 2 * indice + 1;
     int hijoDer = 2 * indice + 2;
@@ -50,7 +50,7 @@ void ColaPrior<T>::heapifyDown(int indice) {
         masGrande = hijoIzq;
     else{
         if (hijoIzq < size && heap[hijoIzq].first == heap[masGrande].first
-            && heap[hijoIzq].second->first > heap[masGrande].second->first){
+            && heap[hijoIzq].second->first < heap[masGrande].second->first){
             masGrande = hijoIzq;
         }
     }
@@ -58,32 +58,43 @@ void ColaPrior<T>::heapifyDown(int indice) {
         masGrande = hijoDer;
     else{
         if (hijoDer < size && heap[hijoDer].first == heap[masGrande].first
-            && heap[hijoDer].second->first > heap[masGrande].second->first){
+            && heap[hijoDer].second->first < heap[masGrande].second->first){
             masGrande = hijoDer;
         }
     }
 
     if (masGrande != indice) {
+        heap[indice].second->second = masGrande; //Actualizo los indices en el diccionario personasEnGasto
+        heap[masGrande].second->second = indice; //Actualizo los indices en el diccionario personasEnGasto
         std::swap(heap[indice], heap[masGrande]);
         heapifyDown(masGrande);
     }
 }
 
 template<class T>
-void ColaPrior<T>::heapifyUp(int indice) {
+void ColaPrior<T>::heapifyUp(int indice) { // O(log(A))
     while(indice > 0){
-        unsigned int padre = (indice - 1)/2;
+        int padre = (indice - 1)/2;
         if(heap[indice].first > heap [padre].first){
+            heap[indice].second->second = padre; //Actualizo los indices en el diccionario
+            heap[padre].second->second = indice; //Actualizo los indices en el diccionario
             swap(heap[indice],heap[padre]);
-        }
-        else{
-            break;
+        }else{
+            if(heap[indice].first == heap[padre].first &&
+               heap[indice].second->first < heap[padre].second->first){
+                heap[indice].second->second = padre; //Actualizo los indices en el diccionario
+                heap[padre].second->second = indice; //Actualizo los indices en el diccionario
+                swap(heap[indice],heap[padre]);
+            }
+            else{
+                break;
+            }
         }
         indice = padre;
     }
 }
 template<class T>
-int ColaPrior<T>::padre(int n) {
+int ColaPrior<T>::padre(int n) { // O(1)
     int res;
     if (n % 2 == 0){
         res = (n/2)-1;
@@ -95,6 +106,11 @@ int ColaPrior<T>::padre(int n) {
 }
 
 template<class T>
-pair<int, map<int, int>::iterator> ColaPrior<T>::indexar(int i) const {
+pair<int, map<int, int>::iterator> ColaPrior<T>::indexar(int i) const { //O(1)
     return heap.at(i);
+}
+
+template<class T>
+void ColaPrior<T>::reemplazar(int indice, const T& nuevoValor) { //O(1)
+    heap[indice] = nuevoValor;
 }
