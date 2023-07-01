@@ -39,28 +39,31 @@ Persona FachadaLollapatuza::mayorGastador() const {
 }
 
 IdPuesto FachadaLollapatuza::menorStock(Producto producto) const {
-   return _lollapatuza.menorStock(producto);
+    return _lollapatuza.menorStock(producto);
 }
 
 const set<Persona> &FachadaLollapatuza::personas() const {
     vector<Persona> vectorPersonas = _lollapatuza.obtenerPersonas();
-    set<Persona> res = set<Persona>(vectorPersonas.begin(), vectorPersonas.end());
+    static set<Persona> res;
+    for(Persona p : vectorPersonas){
+        res.insert(p);
+    }
     return res;
 }
 
 Nat FachadaLollapatuza::stockEnPuesto(IdPuesto idPuesto, const Producto &producto) const {
     map<IdPuesto,Puesto> puestos = _lollapatuza.obtenerPuestos();
-    return puestos.at(idPuesto).obtenerStock(producto);
+    return puestos[idPuesto].obtenerStock(producto);
 }
 
 Nat FachadaLollapatuza::descuentoEnPuesto(IdPuesto idPuesto, const Producto &producto, Nat cantidad) const {
     map<IdPuesto,Puesto> puestos = _lollapatuza.obtenerPuestos();
-    return puestos.at(idPuesto).obtenerDescuento(producto, cantidad);
+    return puestos[idPuesto].obtenerDescuento(producto, cantidad);
 }
 
 Nat FachadaLollapatuza::gastoEnPuesto(IdPuesto idPuesto, Persona persona) const {
     map<IdPuesto,Puesto> puestos = _lollapatuza.obtenerPuestos();
-    return puestos.at(idPuesto).obtenerGasto(persona);
+    return puestos[idPuesto].obtenerGasto(persona);
 }
 
 set<IdPuesto> FachadaLollapatuza::idsDePuestos() const {
