@@ -16,7 +16,7 @@ public:
 
     bool estaEnElMenu(Producto item) const;
 
-    map<Producto, Dinero> obtenerPrecios() const;
+    const map<Producto, Dinero>& obtenerPrecios() const; // NUEVO
 
     Descuento obtenerDescuento(Producto item, Cantidad cant) const;
 
@@ -44,4 +44,3 @@ private:
 
 
 #endif //TP3_PUESTO_H
-
